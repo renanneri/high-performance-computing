@@ -9,7 +9,7 @@ double main(){
    double **A;
    double *b;
    double *x;
-   int n = 1024;
+   int n = 1000;
 
    while(1){
 
@@ -19,7 +19,7 @@ double main(){
    x = (double *)malloc(n * sizeof(double));
 
    /*Counter variables for the loop*/
-   int i, j;
+   int i, j, execution;
    int randint;
    for(i=0; i<n; i++) {
       A[i] = (double *)malloc(n * sizeof(double));
@@ -32,37 +32,44 @@ double main(){
       b[i] = rand();
    }
 
-   for(i=0; i<n; i++) {
-      x[i] = 0;
-   }
+   for(execution=0;execution<10;execution++){
 
-   before_ij = clock();
-   double aux; 
-   for(i=0; i<n; i++) {
-      for(j=0;j<n;j++) {
-         x[i] += A[i][j]*b[j];
+      for(i=0; i<n; i++) {
+         x[i] = 0;
       }
-   }
-   after_ij = clock();
 
-   before_ji = clock();
-   for(j=0; j<n; j++) {
-      for(i=0;i<n;i++) {
-         x[i] += A[i][j]*b[j];
+      before_ij = clock();
+      double aux; 
+      for(i=0; i<n; i++) {
+         for(j=0;j<n;j++) {
+            x[i] += A[i][j]*b[j];
+         }
       }
+      after_ij = clock();
+
+      for(i=0; i<n; i++) {
+         x[i] = 0;
+      }
+
+      before_ji = clock();
+      for(j=0; j<n; j++) {
+         for(i=0;i<n;i++) {
+            x[i] += A[i][j]*b[j];
+         }
+      }
+      after_ji = clock();
+
+
+      printf("%d,%d,%.6f,%.6f\n", n,execution, ((double)(after_ij - before_ij)) / CLOCKS_PER_SEC, ((double)(after_ji - before_ji)) / CLOCKS_PER_SEC);
    }
-   after_ji = clock();
 
-
-   printf("%d;%.6f;%.6f\n", n, ((double)(after_ij - before_ij)) / CLOCKS_PER_SEC, ((double)(after_ji - before_ji)) / CLOCKS_PER_SEC);
-   
    for(i=0; i<n; i++) {
       free(A[i]);
    }
    free(b);
    free(x);
 
-   n = n*2;
+   n = n+1000;
    }
 
    return 0;
